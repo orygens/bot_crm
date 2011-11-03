@@ -1,0 +1,56 @@
+{% load cache %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <link type="image/x-icon" href="{{ STATIC_URL }}images/favicon.ico"
+      rel="shortcut icon" />
+    <link href="{{ STATIC_URL }}css/style.css" type="text/css"
+      rel="stylesheet" />
+    <title>{% block head_title %}{% endblock %}monitore.se</title>
+  </head>
+  <body>
+    <section class="container">
+      <header>
+        {% if user.is_authenticated() %}
+          {% cache 3600 customer_info user.username %}
+            <section class="cliente">
+              <img src="{{ user.twitter_api.profile_image_url }}"
+                width="120px" height="120px" />
+              <div class="txt">
+                <h1>{{ user.twitter_api.name }}</h1>
+                <p><b>@{{ user.twitter_api.screen_name }}</b></p>
+              </div>
+            </section>
+          {% endcache %}
+        {% endif %}
+        <nav>
+          <ul>
+            {% if user.is_authenticated() %}
+              <li><a href="">página inicial</a></li>
+              <li><a href="{% url logout %}"><strong>Sair</strong></a></li>
+            {% else %}
+              <li>
+                <a href="{% url socialauth_begin "twitter" %}">
+                  Efetuar login usando Twitter
+              </a>
+            {% endif %}
+          </ul>
+        </nav>
+      </header>
+      <section class="content">
+        {% block content %}{% endblock %}
+      </section>
+      <footer>
+        <p>
+          Entre em contato conosco através do e-mail
+          <b>
+            <a href="mailto:contato@monitorese.com.br">
+              contato@monitorese.com.br</a>
+          </b>
+        </p>
+      </footer>
+    </section>
+  </body>
+</html>

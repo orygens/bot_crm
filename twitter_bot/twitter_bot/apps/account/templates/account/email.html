@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block head_title %}Configurações de e-mail{% endblock %}
+
+{% block content %}
+  {% if email %}
+    <fieldset>
+      <legend>
+        E-mail {% if email.verified %}confirmado{% else %}aguardando confirmação{% endif %}
+      </legend>
+      {{ email.email }}
+    </fieldset>
+  {% endif %}
+  <form action="{% url account_email %}" method="post">
+    {% csrf_token %}
+    <fieldset>
+      <legend>Configurações de e-mail</legend>
+      <ul>
+        {{ form.as_ul()|safe }}
+        <li>
+          <input type="submit" value="Adicionar e-mail" />
+        </li>
+      </ul>
+    </fieldset>
+  </form>
+{% endblock %}
