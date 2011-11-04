@@ -59,17 +59,27 @@ class StreamListener(tweepy.StreamListener):
             else:
                 d_statuses = DefaultAnswer.objects.all()
                 if d_statuses.count() > 0:
-                    d_statuses = [d_status.text for d_status in d_statuses]
-                    user.twitter_api._api.update_status(
-                        '@%s %s' % (status.user.screen_name, random.choice(d_statuses)),
-                       in_reply_to_status_id=status.id
-                    )
+                    try:
+                        d_statuses = [d_status.text for d_status in d_statuses]
+                        user.twitter_api._api.update_status(
+                            '@%s %s' % (status.user.screen_name, random.choice(d_statuses)),
+                           in_reply_to_status_id=status.id
+                        )
+                    except:
+                        d_statuses = [d_status.text for d_status in d_statuses]
+                        user.twitter_api._api.update_status(
+                            'Olá @%s, %s' % (status.user.screen_name, random.choice(d_statuses)),
+                           in_reply_to_status_id=status.id
+                        )
 
             print status.text.encode('utf-8')
         except UnicodeDecodeError, e:
             # Catch any unicode errors while printing to console
             # and just ignore them to avoid breaking application.
             pass
+        except:
+            pass
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
