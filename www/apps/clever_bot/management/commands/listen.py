@@ -25,15 +25,15 @@ class StreamListener(tweepy.StreamListener):
                 keywords = [keyword.keyword for keyword in s.keyword.all()\
                     if keyword.keyword.lower() in status.text.lower()]
 
-                if len(keywords) == s.keyword.all().count():
-                    user.twitter_api.update_status(
+                if len(keywords) == s.keyword.count():
+                    user.twitter_api._api.update_status(
                         '@%s %s' % (status.user.screen_name, s.text),
-                        in_repy_to_status_id=s.id
+                        in_repy_to_status_id=status.id
                     )
                     break
 
             print status.text.encode('utf-8')
-        except Exception, e:
+        except UnicodeDecodeError, e:
             # Catch any unicode errors while printing to console
             # and just ignore them to avoid breaking application.
             pass
