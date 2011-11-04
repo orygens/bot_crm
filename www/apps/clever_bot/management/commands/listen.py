@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 
+import random
 import tweepy
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
-from clever_bot.models import Status
+from clever_bot.models import Status, DefaultAnswer
 
 CONSUMER_KEY = 'A6uwpIhHkO3tnbR7UwYZ8w'
 CONSUMER_SECRET = 'SCjpCmrg3Apj2tvpiPB2aigMeZYr5xJSLStDfK2a5dg'
@@ -26,11 +27,31 @@ class StreamListener(tweepy.StreamListener):
                     if keyword.keyword.lower() in status.text.lower()]
 
                 if len(keywords) == s.keyword.count():
-                    user.twitter_api._api.update_status(
-                        '@%s %s' % (status.user.screen_name, s.text),
-                        in_repy_to_status_id=status.id
-                    )
+                    try:
+                        user.twitter_api._api.update_status(
+                            '@%s %s' % (status.user.screen_name, s.text),
+                           in_reply_to_status_id=status.id
+                        )
+                    except:
+                        try:
+                            user.twitter_api._api.update_status(
+                                'Olá @%s, %s' % (status.user.screen_name, s.text),
+                               in_reply_to_status_id=status.id
+                            )
+                        except:
+                            user.twitter_api._api.update_status(
+                                'Oi @%s, %s' % (status.user.screen_name, s.text),
+                               in_reply_to_status_id=status.id
+                            )
                     break
+            else:
+                statuses = DefaultAnswer.objects.all()
+                if statuses.count() > 0:
+                    statuses = [status.text for status in statuses]
+                    user.twitter_api._api.update_status(
+                        '@%s %s' % (status.user.screen_name, random.choice(statuses)),
+                       in_reply_to_status_id=status.id
+                    )
 
             print status.text.encode('utf-8')
         except UnicodeDecodeError, e:
@@ -46,3 +67,4 @@ class Command(BaseCommand):
         l = StreamListener()
         streamer = tweepy.Stream(auth1, l, timeout=3000000000, secure=True)
         streamer.userstream()
+        print 'Streamer Activaded!'

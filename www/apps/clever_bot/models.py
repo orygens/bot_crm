@@ -27,3 +27,7 @@ class Settings(models.Model):
     twitter_account = models.ForeignKey(User,
             verbose_name=u'settings', related_name='twitter_settings')
     last_id = models.CharField(max_length=100, default=None)
+
+class DefaultAnswer(models.Model):
+    text = models.CharField(max_length=140, default=None)
+  
