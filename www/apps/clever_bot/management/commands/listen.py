@@ -45,11 +45,11 @@ class StreamListener(tweepy.StreamListener):
                             )
                     break
             else:
-                statuses = DefaultAnswer.objects.all()
-                if statuses.count() > 0:
-                    statuses = [status.text for status in statuses]
+                d_statuses = DefaultAnswer.objects.all()
+                if d_statuses.count() > 0:
+                    d_statuses = [d_status.text for d_status in d_statuses]
                     user.twitter_api._api.update_status(
-                        '@%s %s' % (status.user.screen_name, random.choice(statuses)),
+                        '@%s %s' % (status.user.screen_name, random.choice(d_statuses)),
                        in_reply_to_status_id=status.id
                     )
 
