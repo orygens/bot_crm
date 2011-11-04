@@ -133,6 +133,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'social_auth',
     'account',
+    'clever_bot',
 )
 
 
