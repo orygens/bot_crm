@@ -77,8 +77,6 @@ class StreamListener(tweepy.StreamListener):
             # Catch any unicode errors while printing to console
             # and just ignore them to avoid breaking application.
             pass
-        except:
-            pass
 
 
 class Command(BaseCommand):
