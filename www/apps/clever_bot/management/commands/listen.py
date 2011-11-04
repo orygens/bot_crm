@@ -3,8 +3,10 @@
 import random
 import tweepy
 from django.contrib.auth.models import User
+from tweepy.models import Status as Tweet
 from django.core.management.base import BaseCommand
 from clever_bot.models import Status, DefaultAnswer
+import json
 
 CONSUMER_KEY = 'A6uwpIhHkO3tnbR7UwYZ8w'
 CONSUMER_SECRET = 'SCjpCmrg3Apj2tvpiPB2aigMeZYr5xJSLStDfK2a5dg'
@@ -17,7 +19,16 @@ class StreamListener(tweepy.StreamListener):
         print status
         return False
 
-    def on_status(self, status):
+    def on_data(self, data):
+        if 'user_mentions' in data:
+            user_mentions = data['user_mentions']
+            screen_names = [mention['screen_name'] \
+                        for mention in user_mentions]
+            if 'testeMagazine' in screen_names:
+                status = Tweet.parse(self.api, json.loads(data))
+                self.on_mention(status)
+
+    def on_mention(self, status):
         try:
             user = User.objects.get(username='testeMagazine')
             statuses = Status.objects.filter(twitter_account=user)
