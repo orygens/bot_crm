@@ -21,11 +21,12 @@ class StreamListener(tweepy.StreamListener):
 
     def on_data(self, data):
         if 'entities' in data:
+            data = json.loads(data)
             user_mentions = data['entities']['user_mentions']
             screen_names = [mention['screen_name'] \
                         for mention in user_mentions]
             if 'testeMagazine' in screen_names:
-                status = Tweet.parse(self.api, json.loads(data))
+                status = Tweet.parse(self.api, data)
                 self.on_mention(status)
 
     def on_mention(self, status):
