@@ -20,8 +20,8 @@ class StreamListener(tweepy.StreamListener):
         return False
 
     def on_data(self, data):
-        if 'user_mentions' in data:
-            user_mentions = data['user_mentions']
+        if 'entities' in data:
+            user_mentions = data['entities']['user_mentions']
             screen_names = [mention['screen_name'] \
                         for mention in user_mentions]
             if 'testeMagazine' in screen_names:
