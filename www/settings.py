@@ -134,6 +134,7 @@ INSTALLED_APPS = (
     'social_auth',
     'account',
     'clever_bot',
+    'gunicorn'
 )
 
 
