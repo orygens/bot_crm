@@ -60,15 +60,15 @@ class StreamListener(tweepy.StreamListener):
                 d_statuses = DefaultAnswer.objects.all()
                 if d_statuses.count() > 0:
                     try:
-                        d_statuses = [d_status.text for d_status in d_statuses]
+                        d_statuses_d = [d_status.text for d_status in d_statuses]
                         user.twitter_api._api.update_status(
-                            '@%s %s' % (status.user.screen_name, random.choice(d_statuses)),
+                            '@%s %s' % (status.user.screen_name, random.choice(d_statuses_d)),
                            in_reply_to_status_id=status.id
                         )
                     except:
-                        d_statuses = [d_status.text for d_status in d_statuses]
+                        d_statuses_dup = [d_status.text for d_status in d_statuses]
                         user.twitter_api._api.update_status(
-                            'Olá @%s, %s' % (status.user.screen_name, random.choice(d_statuses)),
+                            'Olá @%s, %s' % (status.user.screen_name, random.choice(d_statuses_dup)),
                            in_reply_to_status_id=status.id
                         )
 
