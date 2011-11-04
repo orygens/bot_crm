@@ -16,7 +16,6 @@ ACCESS_SECRET = 'j49OFFzf6YuP7rSdFpN6zWr4e9Kuol2Fe1fSJxtwg'
 
 class StreamListener(tweepy.StreamListener):
     def on_error(self, status):
-        print status
         return False
 
     def on_data(self, data):
@@ -30,54 +29,48 @@ class StreamListener(tweepy.StreamListener):
                 self.on_mention(status)
 
     def on_mention(self, status):
-        try:
-            user = User.objects.get(username='testeMagazine')
-            statuses = Status.objects.filter(twitter_account=user)
+        user = User.objects.get(username='testeMagazine')
+        statuses = Status.objects.filter(twitter_account=user)
 
-            for s in statuses:
-                keywords = [keyword.keyword for keyword in s.keyword.all()\
-                    if keyword.keyword.lower() in status.text.lower()]
+        for s in statuses:
+            keywords = [keyword.keyword for keyword in s.keyword.all()\
+                if keyword.keyword.lower() in status.text.lower()]
 
-                if len(keywords) == s.keyword.count():
+            if len(keywords) == s.keyword.count():
+                try:
+                    user.twitter_api._api.update_status(
+                        '@%s %s' % (status.user.screen_name, s.text),
+                       in_reply_to_status_id=status.id
+                    )
+                except:
                     try:
                         user.twitter_api._api.update_status(
-                            '@%s %s' % (status.user.screen_name, s.text),
+                            u'Olá @%s, %s' % (status.user.screen_name, s.text),
                            in_reply_to_status_id=status.id
                         )
                     except:
-                        try:
-                            user.twitter_api._api.update_status(
-                                'Olá @%s, %s' % (status.user.screen_name, s.text),
-                               in_reply_to_status_id=status.id
-                            )
-                        except:
-                            user.twitter_api._api.update_status(
-                                'Oi @%s, %s' % (status.user.screen_name, s.text),
-                               in_reply_to_status_id=status.id
-                            )
-                    break
-            else:
-                d_statuses = DefaultAnswer.objects.all()
-                if d_statuses.count() > 0:
-                    try:
-                        d_statuses_d = [d_status.text for d_status in d_statuses]
                         user.twitter_api._api.update_status(
-                            '@%s %s' % (status.user.screen_name, random.choice(d_statuses_d)),
+                            'Oi @%s, %s' % (status.user.screen_name, s.text),
                            in_reply_to_status_id=status.id
                         )
-                    except:
-                        d_statuses_dup = [d_status.text for d_status in d_statuses]
-                        user.twitter_api._api.update_status(
-                            'Olá @%s, %s' % (status.user.screen_name, random.choice(d_statuses_dup)),
-                           in_reply_to_status_id=status.id
-                        )
+                break
+        else:
+            d_statuses = DefaultAnswer.objects.all()
+            if d_statuses.count() > 0:
+                try:
+                    d_statuses_d = [d_status.text for d_status in d_statuses]
+                    user.twitter_api._api.update_status(
+                        '@%s %s' % (status.user.screen_name, random.choice(d_statuses_d)),
+                       in_reply_to_status_id=status.id
+                    )
+                except:
+                    d_statuses_dup = [d_status.text for d_status in d_statuses]
+                    user.twitter_api._api.update_status(
+                        u'Olá @%s, %s' % (status.user.screen_name, random.choice(d_statuses_dup)),
+                       in_reply_to_status_id=status.id
+                    )
 
-            print status.text.encode('utf-8')
-        except UnicodeDecodeError, e:
-            # Catch any unicode errors while printing to console
-            # and just ignore them to avoid breaking application.
-            pass
-
+        print status.text.encode('utf-8')
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
