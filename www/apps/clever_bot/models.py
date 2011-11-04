@@ -30,4 +30,6 @@ class Settings(models.Model):
 
 class DefaultAnswer(models.Model):
     text = models.CharField(max_length=140, default=None)
-  
+
+    def __unicode__(self):
+        return self.text
